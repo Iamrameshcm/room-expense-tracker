@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Room Expense Tracker</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <header class="header">
+      <h1>Room Expense Tracker</h1>
+    </header>
+
+    <main class="content">
+      <section id="adminSection" class="card hidden">
+        <h2>Admin: Add Member</h2>
+        <input type="text" id="newUserName" placeholder="Name">
+        <input type="email" id="newUserEmail" placeholder="Email">
+        <input type="password" id="newUserPassword" placeholder="Password">
+        <button id="addUserBtn">Add Member</button>
+        <div class="user-list" id="userList"></div>
+      </section>
+
+
+      <section class="card">
+        <h2>Add Expense</h2>
+        <select id="expenseUser"></select>
+        <input type="number" id="expenseAmount" placeholder="Amount">
+        <input type="text" id="expenseRemarks" placeholder="Remarks">
+        <button id="addExpenseBtn">Add Expense</button>
+      </section>
+
+      <section class="card">
+        <h2>Monthly Summary</h2>
+        <input type="month" id="summaryMonth">
+        <button id="getSummaryBtn">Get Summary</button>
+        <div class="summary-list" id="summaryList"></div>
+      </section>
+
+      <section class="card">
+        <h2>All Expenses</h2>
+        <div class="expense-list" id="expenseList"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
