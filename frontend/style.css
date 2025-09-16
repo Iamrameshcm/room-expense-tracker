@@ -2,84 +2,138 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
 }
 
 body {
+  background: linear-gradient(135deg, #d7e3ff, #f0f4f9);
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
 }
 
 .login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  max-width: 400px;
   padding: 20px;
 }
 
 .login-card {
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
   padding: 40px 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 380px;
   text-align: center;
-  animation: fadeIn 0.8s ease-in-out;
+  transform: translateY(15px);
+  opacity: 0;
+  animation: fadeInUp 0.6s ease forwards;
 }
 
 .title {
   font-size: 24px;
-  color: #333;
-  margin-bottom: 8px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 10px;
 }
+
 .subtitle {
   font-size: 18px;
-  color: #666;
+  font-weight: 500;
+  color: #555;
   margin-bottom: 25px;
 }
 
 .input-group {
-  margin-bottom: 18px;
+  margin-bottom: 15px;
+  text-align: left;
 }
+
 .input-group input {
   width: 100%;
   padding: 12px 14px;
-  border: 1px solid #ddd;
+  border: 1px solid #ccd4dd;
   border-radius: 8px;
   font-size: 15px;
   outline: none;
-  transition: 0.3s;
+  transition: border-color 0.25s, box-shadow 0.25s;
 }
+
 .input-group input:focus {
-  border-color: #2575fc;
-  box-shadow: 0 0 6px rgba(37, 117, 252, 0.3);
+  border-color: #005cbb;
+  box-shadow: 0 0 0 3px rgba(0, 92, 187, 0.15);
 }
 
 button {
   width: 100%;
   padding: 12px;
+  background: #005cbb;
+  color: white;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 500;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  background: #2575fc;
-  color: #fff;
-  transition: 0.3s;
+  transition: background 0.25s, transform 0.15s;
 }
+
 button:hover {
-  background: #1a5cd8;
+  background: #004a99;
+}
+
+button:active {
+  transform: scale(0.98);
 }
 
 .error-msg {
-  margin-top: 12px;
+  margin-top: 15px;
   font-size: 14px;
-  color: red;
-  min-height: 18px;
+  color: #d9534f;
+  min-height: 18px; 
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+
+  .login-card {
+    padding: 25px 20px;
+    max-width: 100%;
+    border-radius: 10px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+
+  .input-group input {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+
+  button {
+    font-size: 15px;
+    padding: 10px;
+  }
 }

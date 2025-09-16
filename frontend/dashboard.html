@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - Room Expense Tracker</title>
   <link rel="stylesheet" href="dashboard.css">
 </head>
+
 <body>
   <div class="dashboard-container">
     <header class="header">
@@ -25,10 +27,12 @@
 
       <section class="card">
         <h2>Add Expense</h2>
-        <select id="expenseUser"></select>
-        <input type="number" id="expenseAmount" placeholder="Amount">
+        <select id="expenseUser">
+        </select>
+        <input min="1" max="2999" step="1" type="number" id="expenseAmount" placeholder="Amount">
         <input type="text" id="expenseRemarks" placeholder="Remarks">
         <button id="addExpenseBtn">Add Expense</button>
+        <p id="expenseError" class="error-msg" style="color:red; margin-top:5px;"></p>
       </section>
 
       <section class="card">
@@ -36,6 +40,14 @@
         <input type="month" id="summaryMonth">
         <button id="getSummaryBtn">Get Summary</button>
         <div class="summary-list" id="summaryList"></div>
+      </section>
+
+      <section class="card">
+        <h2>User Monthly Usage</h2>
+        <!-- <input type="text" id="usageUserName" placeholder="Enter user name"> -->
+        <input type="month" id="usageMonth">
+        <button id="loadUsageBtn">Load Usage</button>
+        <div class="usage-list" id="usageList"></div>
       </section>
 
       <section class="card">
@@ -48,4 +60,5 @@
 
   <script src="app.js"></script>
 </body>
+
 </html>

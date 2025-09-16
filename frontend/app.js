@@ -1,10 +1,12 @@
+// const API_BASE = 'https://room-expense-tracker-kun8.onrender.com/api';
 const API_BASE = 'http://localhost:3000/api';
 let token = localStorage.getItem('token');
 let currentUser = JSON.parse(localStorage.getItem('user'));
 
-// --- LOGIN ---
+
 document.getElementById('loginBtn')?.addEventListener('click', async () => {
-  const email = document.getElementById('email').value;
+  const email = document.getElementById('email').value.toLowerCase();
+  console.log(email);
   const password = document.getElementById('password').value;
   const errorEl = document.getElementById('error');
 
@@ -29,18 +31,61 @@ document.getElementById('loginBtn')?.addEventListener('click', async () => {
   }
 });
 
-// --- DASHBOARD ---
+
+// window.addEventListener('DOMContentLoaded', async () => {
+//   if (!token) return window.location.href = 'index.html';
+
+//   if (currentUser.role === 'admin') document.getElementById('adminSection').classList.remove('hidden');
+
+//   await loadUsers();
+//   await loadExpenses();
+// });
+
 window.addEventListener('DOMContentLoaded', async () => {
-  if (!token) return window.location.href = 'index.html';
+  try {
+    const currentPage = window.location.pathname.split('/').pop();
 
-  // Show admin section
-  if (currentUser.role === 'admin') document.getElementById('adminSection').classList.remove('hidden');
 
-  await loadUsers();
-  await loadExpenses();
+    const page = currentPage.toLowerCase();
+
+
+    if (!token && page !== 'index.html') {
+      window.location.href = 'index.html';
+      return;
+    }
+
+ 
+    if (token && page === 'index.html') {
+      window.location.href = 'dashboard.html';
+      return;
+    }
+
+
+    if (page === 'dashboard.html') {
+      if (currentUser?.role === 'admin') {
+        const adminEl = document.getElementById('adminSection');
+        if (adminEl) adminEl.classList.remove('hidden');
+      }
+
+      try {
+        await loadUsers();
+      } catch(err) {
+        console.error("Error loading users:", err);
+      }
+
+      try {
+        await loadExpenses();
+      } catch(err) {
+        console.error("Error loading expenses:", err);
+      }
+    }
+  } catch(err) {
+    console.error("DOMContentLoaded error:", err);
+  }
 });
 
-// Load users for admin dropdown
+
+
 async function loadUsers() {
   const res = await fetch(`${API_BASE}/users`, { headers: { Authorization: `Bearer ${token}` } });
   const users = await res.json();
@@ -66,7 +111,6 @@ async function loadUsers() {
   }
 }
 
-// Add new user (admin only)
 document.getElementById('addUserBtn')?.addEventListener('click', async () => {
   const name = document.getElementById('newUserName').value;
   const email = document.getElementById('newUserEmail').value;
@@ -84,27 +128,51 @@ document.getElementById('addUserBtn')?.addEventListener('click', async () => {
   await loadUsers();
 });
 
-// Add expense
 document.getElementById('addExpenseBtn')?.addEventListener('click', async () => {
   const userId = document.getElementById('expenseUser').value;
   const amount = parseFloat(document.getElementById('expenseAmount').value);
   const remark = document.getElementById('expenseRemarks').value;
-  console.log(remark)
+  const errorEl = document.getElementById('expenseError');
 
-  await fetch(`${API_BASE}/expenses`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-    body: JSON.stringify({ userId, amount, remark, date: new Date() })    
-  });
 
-  document.getElementById('expenseAmount').value = '';
-  document.getElementById('expenseRemarks').value = '';
-  await loadExpenses();
-  await getSummary();
+  if (errorEl) errorEl.textContent = '';
+
+  if (isNaN(amount) || amount <= 0) {
+    if (errorEl) errorEl.textContent = 'Amount must be a positive number';
+    return;
+  }
+  if (amount >= 3000) {
+    if (errorEl) errorEl.textContent = 'Amount must be less than 3000. Please contact the admin if you need to add an expense above this limit.';
+    return;
+  }
+
+  try {
+    await fetch(`${API_BASE}/expenses`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json', 
+        Authorization: `Bearer ${token}` 
+      },
+      body: JSON.stringify({ userId, amount, remark, date: new Date() })
+    });
+
+    console.log("userId", userId);
+
+
+    document.getElementById('expenseAmount').value = '';
+    document.getElementById('expenseRemarks').value = '';
+
+    await loadExpenses();
+    await getSummary();
+  } catch(err) {
+    if (errorEl) errorEl.textContent = 'Error adding expense';
+    console.error(err);
+  }
 });
 
-// Load all expenses
+
 async function loadExpenses() {
+  console.log("started")
   const res = await fetch(`${API_BASE}/expenses`, { headers: { Authorization: `Bearer ${token}` } });
   const expenses = await res.json();
   const expenseList = document.getElementById('expenseList');
@@ -118,7 +186,6 @@ async function loadExpenses() {
   });
 }
 
-// Monthly summary
 document.getElementById('getSummaryBtn')?.addEventListener('click', getSummary);
 
 async function getSummary() {
@@ -136,4 +203,31 @@ async function getSummary() {
     div.textContent = `${u.name}: Paid ₹${u.paid}, Share ₹${u.share}, Balance ₹${u.balance}`;
     summaryList.appendChild(div);
   });
+}
+console.log(currentUser.name);
+document.getElementById('loadUsageBtn').addEventListener('click', () => {
+    const userName = currentUser.name;
+    const month = document.getElementById('usageMonth').value;
+    loadUserUsage(userName, month);
+    console.log("Current User expense Button Clicked ")
+  });
+async function loadUserUsage(userName, month) {
+  try {
+    const res = await fetch(`${API_BASE}/expenses/usage/${userName}/${month}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error('Could not fetch usage');
+
+    const expenses = await res.json();
+    const usageList = document.getElementById('usageList');
+    usageList.innerHTML = '';
+
+    expenses.forEach(exp => {
+      const div = document.createElement('div');
+      div.textContent = `${new Date(exp.date).toLocaleDateString()}: ₹${exp.amount} - ${exp.remark}`;
+      usageList.appendChild(div);
+    });
+  } catch (err) {
+    console.error(err);
+  }
 }
